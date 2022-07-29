@@ -13,6 +13,7 @@ import Data from '../data.json';
 const SettingsEl = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   max-width: 128rem;
   margin: 4rem auto 2rem auto;
 `;
@@ -27,7 +28,14 @@ const VizEl = styled.div`
 
 const SelectionEl = styled.div`
   width: calc(33.33% - 1rem);
+  margin-bottom: 1rem;
   font-size: 1.4rem;
+  @media (max-width: 800px) {
+    width: calc(50% - 1rem);
+  }
+  @media (max-width: 420px) {
+    width: 100%;
+  }
 `;
 
 export const Visualization = () => {

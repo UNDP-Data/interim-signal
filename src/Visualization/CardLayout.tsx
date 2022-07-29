@@ -98,6 +98,12 @@ const CardEl = styled.div`
   margin: 0 1rem 2rem 1rem;
   width: calc(33.33% - 2rem);
   cursor: pointer;
+  @media (max-width: 678px) {
+    width: calc(50% - 1rem);
+  }
+  @media (max-width: 420px) {
+    width: 100%;
+  }
 `;
 
 export const CardLayout = (props: Props) => {
