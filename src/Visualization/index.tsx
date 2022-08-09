@@ -1,7 +1,7 @@
 import styled from 'styled-components';
+import axios from 'axios';
 import { Input, Select } from 'antd';
 import { useEffect, useState } from 'react';
-import { csv } from 'd3-fetch';
 import {
   CountryList, HorizonColor, SSCOLOR, STEEPVCOLOR,
 } from '../Constants';
@@ -47,7 +47,11 @@ export const Visualization = () => {
   const [filteredText, setFilteredText] = useState<string>('');
 
   useEffect(() => {
-    csv('https://kobo.humanitarianresponse.info/api/v2/assets/aVyAsMwPQYr97DtTh5uhy3/export-settings/esdBK8ZH9qUQUuwegdC7Hse/data.csv')
+    axios.get('https://kobo.humanitarianresponse.info/assets/aVyAsMwPQYr97DtTh5uhy3/submissions/?format=json', {
+      headers: {
+        Authorization: 'Token 53d5466b000d9b9f0ded7e174c31f0146f23397f',
+      },
+    })
       .then((d: any) => {
         // eslint-disable-next-line no-console
         console.log(d);
