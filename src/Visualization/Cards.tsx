@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { SSCOLOR, STEEPVCOLOR } from '../Constants';
+import { HorizonColor, SSCOLOR, STEEPVCOLOR } from '../Constants';
 // import { COLORVALUES, SDGCOLOR, STEEPVCOLOR } from '../Constants';
 import { SignalDataFormattedType } from '../Types';
 
@@ -104,21 +104,24 @@ export const Cards = (props: Props) => {
         <ModalTitleEl>Horizon</ModalTitleEl>
         <ModalBodyEl>
           <FlexEl>
-            <ChipEl>
+            <ChipEl
+              bgColor={HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?'])].bgColor : undefined}
+              fontColor={HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?'])].textColor : undefined}
+            >
               {data['When is the signal likely to have the most impact if it becomes dominant?']}
             </ChipEl>
           </FlexEl>
         </ModalBodyEl>
         <HR />
-        <ModalTitleEl>Related Signature Solution</ModalTitleEl>
+        <ModalTitleEl>Related Signature Solution/Enablers</ModalTitleEl>
         <ModalBodyEl>
           <FlexEl>
             {
               data.relatedSignatureSolutions.map((d, i) => (
                 <ChipEl
                   key={i}
-                  bgColor={SSCOLOR.findIndex((el) => el.value === d) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value === d)].bgColor : undefined}
-                  fontColor={SSCOLOR.findIndex((el) => el.value === d) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value === d)].textColor : undefined}
+                  bgColor={SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase()) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase())].bgColor : undefined}
+                  fontColor={SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase()) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase())].textColor : undefined}
                 >
                   {d}
                 </ChipEl>

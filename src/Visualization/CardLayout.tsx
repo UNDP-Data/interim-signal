@@ -1,17 +1,17 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable no-unused-vars */
 import { Modal } from 'antd';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { COLORVALUES, SSCOLOR, STEEPVCOLOR } from '../Constants';
+import { HorizonColor, SSCOLOR, STEEPVCOLOR } from '../Constants';
 import Data from '../data.json';
-import { SignalDataFormattedType, SignalDataType } from '../Types';
+import { SignalDataFormattedType } from '../Types';
 import { Cards } from './Cards';
 
 interface Props {
   filteredSS: string;
   filteredSteep: string;
   filteredText: string;
+  selectedHorizon: string;
+  selectedCountry: string;
 }
 
 const FlexContainer = styled.div`
@@ -64,27 +64,9 @@ const FlexEl = styled.div`
   align-items: center;
 `;
 
-const DivValuesEl = styled.div`
-  margin-bottom: 1rem;
-  flex-wrap: wrap;
-  align-items: center;
-`;
-
 const HR = styled.hr`
   margin: 2rem  0 1rem 0;
   border-top: 1px solid var(--black-100);
-`;
-
-const ValueSpan = styled.div`
-  width: fit-content;
-  background-color: #efdbff;
-  display: flex;
-  color: #391085;
-  padding: 0 1rem;
-  align-items: center;
-  display: flex;
-  border-radius: 3rem;
-  justify-content: center;
 `;
 
 const CardEl = styled.div`
@@ -106,16 +88,29 @@ const CardEl = styled.div`
   }
 `;
 
+const ButtonEl = styled.button`
+  padding: 1rem 1.5rem !important;
+  background-color: var(--primary-blue) !important;
+  color: var(--white) !important;
+  font-weight: bold !important;
+  font-size: 1.6rem !important;
+  text-transform: uppercase;
+  border: 0 !important;
+
+`;
+
 export const CardLayout = (props: Props) => {
   const {
     filteredSS,
     filteredSteep,
     filteredText,
+    selectedHorizon,
+    selectedCountry,
   } = props;
   const DataFormatted = Data.map((d) => {
     const relatedSignatureSolutions = [d['Which primary signature solution/enabler is the signal linked to?'] === 'Other (unlinked to a signature solution/enabler)' ? d['Other (unlinked to a signature solution/enabler)'] : d['Which primary signature solution/enabler is the signal linked to?']];
     if (d['Which additional signature solution/enabler is the signal linked to?_Development financing'] === 1 && relatedSignatureSolutions.indexOf('Development Financing') === -1) relatedSignatureSolutions.push('Development Financing');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Digitalisation'] === 1 && relatedSignatureSolutions.indexOf('Digitization') === -1) relatedSignatureSolutions.push('Digitization');
+    if (d['Which additional signature solution/enabler is the signal linked to?_Digitalisation'] === 1 && relatedSignatureSolutions.indexOf('Digitalisation') === -1) relatedSignatureSolutions.push('Digitalisation');
     if (d['Which additional signature solution/enabler is the signal linked to?_Energy'] === 1 && relatedSignatureSolutions.indexOf('Energy') === -1) relatedSignatureSolutions.push('Energy');
     if (d['Which additional signature solution/enabler is the signal linked to?_Environment'] === 1 && relatedSignatureSolutions.indexOf('Environment') === -1) relatedSignatureSolutions.push('Environment');
     if (d['Which additional signature solution/enabler is the signal linked to?_Gender equality'] === 1 && relatedSignatureSolutions.indexOf('Gender Equality') === -1) relatedSignatureSolutions.push('Gender Equality');
@@ -123,6 +118,7 @@ export const CardLayout = (props: Props) => {
     if (d['Which additional signature solution/enabler is the signal linked to?_Innovation'] === 1 && relatedSignatureSolutions.indexOf('Innovation') === -1) relatedSignatureSolutions.push('Innovation');
     if (d['Which additional signature solution/enabler is the signal linked to?_Poverty and inequality'] === 1 && relatedSignatureSolutions.indexOf('Poverty and Inequality') === -1) relatedSignatureSolutions.push('Poverty and Inequality');
     if (d['Which additional signature solution/enabler is the signal linked to?_Resilience'] === 1 && relatedSignatureSolutions.indexOf('Resilience') === -1) relatedSignatureSolutions.push('Resilience');
+    if (d['Which additional signature solution/enabler is the signal linked to?_Other (unlinked to a signature solution/enabler)'] === 1 && relatedSignatureSolutions.indexOf('Others') === -1) relatedSignatureSolutions.push('Others');
     if (d['Other (unlinked to a signature solution/enabler)'] !== '' && relatedSignatureSolutions.indexOf(d['Other (unlinked to a signature solution/enabler)']) === -1) relatedSignatureSolutions.push(d['Other (unlinked to a signature solution/enabler)']);
     const STEEPV = [];
     if (d['STEEP V_Economic – issues of value, money, financial tools and systems, business and business models, exchanges and transactions'] === 1) STEEPV.push('Economic');
@@ -142,13 +138,15 @@ export const CardLayout = (props: Props) => {
   });
   const DataFilteredBySteep = filteredSteep === 'All STEEP+V' ? [...DataFormatted] : DataFormatted.filter((d) => d.STEEPV.indexOf(filteredSteep) !== -1);
   const DataFilteredBySS = filteredSS === 'All Signature Solutions' ? [...DataFilteredBySteep] : DataFilteredBySteep.filter((d) => d.relatedSignatureSolutions.indexOf(filteredSS) !== -1);
-  const DataFilteredByText = filteredText === '' ? [...DataFilteredBySS] : DataFilteredBySS.filter((d) => d['Signal Title'].toLowerCase().includes(filteredText.toLowerCase()) || d.keywords.indexOf(filteredText) !== -1);
+  const DataFilteredByHorizon = selectedHorizon === 'All Horizons' ? [...DataFilteredBySS] : DataFilteredBySS.filter((d) => d['When is the signal likely to have the most impact if it becomes dominant?'] === selectedHorizon);
+  const DataFilteredByText = filteredText === '' ? [...DataFilteredByHorizon] : DataFilteredByHorizon.filter((d) => d['Signal Title'].toLowerCase().includes(filteredText.toLowerCase()) || d['Signal Description: What is the signal about?'].toLowerCase().includes(filteredText.toLowerCase()) || d['Signal Description: Why is it important for development?'].toLowerCase().includes(filteredText.toLowerCase()) || d.keywords.indexOf(filteredText) !== -1);
+  const DataFilteredByCountry = selectedCountry === 'All CO/Unit' ? [...DataFilteredByText] : DataFilteredByText.filter((d) => d['CO/Unit'] === selectedCountry);
   const [mouseClickData, setMouseClickData] = useState<SignalDataFormattedType | null>(null);
   return (
     <>
       <FlexContainer>
         {
-          DataFilteredByText.map((d, i) => <CardEl key={i} onClick={() => { setMouseClickData(d as SignalDataFormattedType); }}><Cards data={d as SignalDataFormattedType} key={i} /></CardEl>)
+          DataFilteredByCountry.map((d, i) => <CardEl key={i} onClick={() => { setMouseClickData(d as SignalDataFormattedType); }}><Cards data={d as SignalDataFormattedType} key={i} /></CardEl>)
         }
       </FlexContainer>
       {
@@ -158,6 +156,11 @@ export const CardLayout = (props: Props) => {
             title={mouseClickData['Signal Title']}
             onOk={() => { setMouseClickData(null); }}
             onCancel={() => { setMouseClickData(null); }}
+            footer={[
+              <ButtonEl onClick={() => { setMouseClickData(null); }}>
+                Done
+              </ButtonEl>,
+            ]}
             width={960}
           >
             <SignalTitleEl>{mouseClickData['Signal Title']}</SignalTitleEl>
@@ -194,20 +197,24 @@ export const CardLayout = (props: Props) => {
             <HR />
             <ModalTitleEl>Horizon</ModalTitleEl>
             <ModalBodyEl>
-              <ChipEl style={{ width: 'fit-content' }}>
+              <ChipEl
+                style={{ width: 'fit-content' }}
+                bgColor={HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?'])].bgColor : undefined}
+                fontColor={HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?'])].textColor : undefined}
+              >
                 {mouseClickData['When is the signal likely to have the most impact if it becomes dominant?']}
               </ChipEl>
             </ModalBodyEl>
             <HR />
-            <ModalTitleEl>Related Signature Solutions</ModalTitleEl>
+            <ModalTitleEl>Related Signature Solutions/Enablers</ModalTitleEl>
             <ModalBodyEl>
               <FlexEl>
                 {
                   mouseClickData.relatedSignatureSolutions.map((d, i) => (
                     <ChipEl
                       key={i}
-                      bgColor={SSCOLOR.findIndex((el) => el.value === d) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value === d)].bgColor : undefined}
-                      fontColor={SSCOLOR.findIndex((el) => el.value === d) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value === d)].textColor : undefined}
+                      bgColor={SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase()) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase())].bgColor : undefined}
+                      fontColor={SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase()) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase())].textColor : undefined}
                     >
                       {d}
                     </ChipEl>
@@ -217,6 +224,11 @@ export const CardLayout = (props: Props) => {
                   mouseClickData['Other (unlinked to a signature solution/enabler)'] !== '' ? <ChipEl>{mouseClickData['Other (unlinked to a signature solution/enabler)']}</ChipEl> : null
                 }
               </FlexEl>
+            </ModalBodyEl>
+            <HR />
+            <ModalTitleEl>CO/Unit</ModalTitleEl>
+            <ModalBodyEl>
+              {mouseClickData['CO/Unit']}
             </ModalBodyEl>
             <HR />
             <ModalTitleEl>Sources</ModalTitleEl>
