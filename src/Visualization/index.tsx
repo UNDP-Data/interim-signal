@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { Input, Select } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { csv } from 'd3-fetch';
 import {
   CountryList, HorizonColor, SSCOLOR, STEEPVCOLOR,
 } from '../Constants';
@@ -44,6 +45,15 @@ export const Visualization = () => {
   const [selectedHorizon, setSelectedHorizon] = useState<string>('All Horizons');
   const [selectedCountry, setSelectedCountry] = useState<string>('All CO/Unit');
   const [filteredText, setFilteredText] = useState<string>('');
+
+  useEffect(() => {
+    csv('https://kobo.humanitarianresponse.info/api/v2/assets/aVyAsMwPQYr97DtTh5uhy3/export-settings/esdBK8ZH9qUQUuwegdC7Hse/data.csv')
+      .then((d: any) => {
+        // eslint-disable-next-line no-console
+        console.log(d);
+      });
+  }, []);
+
   return (
     <>
       <SettingsContainer>
