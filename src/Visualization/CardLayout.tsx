@@ -1,9 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 import { Modal } from 'antd';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { HorizonColor, SSCOLOR, STEEPVCOLOR } from '../Constants';
-import Data from '../data.json';
-import { SignalDataFormattedType } from '../Types';
+import {
+  HorizonColor, SSCOLOR, STEEPVCOLOR, CountryList, STRENGTH,
+} from '../Constants';
+import { APIDataType, DataFormattedType } from '../Types';
 import { Cards } from './Cards';
 
 interface Props {
@@ -12,6 +14,7 @@ interface Props {
   filteredText: string;
   selectedHorizon: string;
   selectedCountry: string;
+  data: APIDataType[];
 }
 
 const FlexContainer = styled.div`
@@ -96,7 +99,14 @@ const ButtonEl = styled.button`
   font-size: 1.6rem !important;
   text-transform: uppercase;
   border: 0 !important;
+`;
 
+const ColumnEl = styled.div`
+  width: 50%;
+`;
+
+const ColumnContainer = styled.div`
+  display: flex;
 `;
 
 export const CardLayout = (props: Props) => {
@@ -106,54 +116,43 @@ export const CardLayout = (props: Props) => {
     filteredText,
     selectedHorizon,
     selectedCountry,
+    data,
   } = props;
-  const DataFormatted = Data.map((d) => {
-    const relatedSignatureSolutions = [d['Which primary signature solution/enabler is the signal linked to?'] === 'Other (unlinked to a signature solution/enabler)' ? d['Other (unlinked to a signature solution/enabler)'] : d['Which primary signature solution/enabler is the signal linked to?']];
-    if (d['Which additional signature solution/enabler is the signal linked to?_Development financing'] === 1 && relatedSignatureSolutions.indexOf('Development Financing') === -1) relatedSignatureSolutions.push('Development Financing');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Digitalisation'] === 1 && relatedSignatureSolutions.indexOf('Digitalisation') === -1) relatedSignatureSolutions.push('Digitalisation');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Energy'] === 1 && relatedSignatureSolutions.indexOf('Energy') === -1) relatedSignatureSolutions.push('Energy');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Environment'] === 1 && relatedSignatureSolutions.indexOf('Environment') === -1) relatedSignatureSolutions.push('Environment');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Gender equality'] === 1 && relatedSignatureSolutions.indexOf('Gender Equality') === -1) relatedSignatureSolutions.push('Gender Equality');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Governance'] === 1 && relatedSignatureSolutions.indexOf('Governance') === -1) relatedSignatureSolutions.push('Governance');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Innovation'] === 1 && relatedSignatureSolutions.indexOf('Innovation') === -1) relatedSignatureSolutions.push('Innovation');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Poverty and inequality'] === 1 && relatedSignatureSolutions.indexOf('Poverty and Inequality') === -1) relatedSignatureSolutions.push('Poverty and Inequality');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Resilience'] === 1 && relatedSignatureSolutions.indexOf('Resilience') === -1) relatedSignatureSolutions.push('Resilience');
-    if (d['Which additional signature solution/enabler is the signal linked to?_Other (unlinked to a signature solution/enabler)'] === 1 && relatedSignatureSolutions.indexOf('Others') === -1) relatedSignatureSolutions.push('Others');
-    if (d['Other (unlinked to a signature solution/enabler)'] !== '' && relatedSignatureSolutions.indexOf(d['Other (unlinked to a signature solution/enabler)']) === -1) relatedSignatureSolutions.push(d['Other (unlinked to a signature solution/enabler)']);
-    const STEEPV = [];
-    if (d['STEEP V_Economic – issues of value, money, financial tools and systems, business and business models, exchanges and transactions'] === 1) STEEPV.push('Economic');
-    if (d['STEEP V_Environmental – The natural world, living environment, sustainability, resources, climate and health'] === 1) STEEPV.push('Environmental');
-    if (d['STEEP V_Political – legal issues, policy, governance, rules and regulations and organizational systems'] === 1) STEEPV.push('Political');
-    if (d['STEEP V_Social – issues related to human culture, demography communication, movement and migration, work and education'] === 1) STEEPV.push('Social');
-    if (d['STEEP V_Technological – Made culture, tools, devices, systems, infrastructure and networks'] === 1) STEEPV.push('Technological');
-    if (d['STEEP V_Values – ethics, spirituality, ideology or other forms of values'] === 1) STEEPV.push('Values');
+  const DataFormatted = data.map((d) => {
+    const relatedSignatureSolutions = [d['C_category/q8_ss'] === 'other' ? d['C_category/q8_ss_other'] : SSCOLOR[SSCOLOR.findIndex((ss) => ss.key === d['C_category/q8_ss'])].value];
+    d['C_category/q8_1_ss'].split(' ').forEach((el) => {
+      if (el !== 'other') relatedSignatureSolutions.push(SSCOLOR[SSCOLOR.findIndex((ss) => ss.key === el)].value);
+    });
+    if (d['C_category/q8_ss_other'] && d['C_category/q8_ss'] !== 'other') relatedSignatureSolutions.push(d['C_category/q8_ss_other']);
+    const STEEPV = d['C_category/q6_steepv'].split(' ').map((steepv) => STEEPVCOLOR[STEEPVCOLOR.findIndex((el) => el.key === steepv)].value);
     const keywords = [];
-    if (d['Keyword 1'] !== '') keywords.push(d['Keyword 1']);
-    if (d['Keyword 2'] !== '') keywords.push(d['Keyword 2']);
-    if (d['Keyword 3'] !== '') keywords.push(d['Keyword 3']);
-    if (d['Enter \'other\' keyword'] !== '') keywords.push(d['Enter \'other\' keyword']);
+    if (d['C_category/D_keywords/q10_keywords_01']) keywords.push(d['C_category/D_keywords/q10_keywords_01']);
+    if (d['C_category/D_keywords/q10_keywords_02']) keywords.push(d['C_category/D_keywords/q10_keywords_02']);
+    if (d['C_category/D_keywords/q10_keywords_03']) keywords.push(d['C_category/D_keywords/q10_keywords_03']);
+    const country = CountryList[CountryList.findIndex((el) => el.key === d['A_Demo/q1_country'])].value;
+    const horizon = HorizonColor[HorizonColor.findIndex((el) => el.key === d['C_category/q9_timeframe'])].value;
     return {
-      ...d, relatedSignatureSolutions, STEEPV, keywords,
+      ...d, relatedSignatureSolutions, STEEPV, keywords, country, horizon,
     };
   });
   const DataFilteredBySteep = filteredSteep === 'All STEEP+V' ? [...DataFormatted] : DataFormatted.filter((d) => d.STEEPV.indexOf(filteredSteep) !== -1);
   const DataFilteredBySS = filteredSS === 'All Signature Solutions' ? [...DataFilteredBySteep] : DataFilteredBySteep.filter((d) => d.relatedSignatureSolutions.indexOf(filteredSS) !== -1);
-  const DataFilteredByHorizon = selectedHorizon === 'All Horizons' ? [...DataFilteredBySS] : DataFilteredBySS.filter((d) => d['When is the signal likely to have the most impact if it becomes dominant?'] === selectedHorizon);
-  const DataFilteredByText = filteredText === '' ? [...DataFilteredByHorizon] : DataFilteredByHorizon.filter((d) => d['Signal Title'].toLowerCase().includes(filteredText.toLowerCase()) || d['Signal Description: What is the signal about?'].toLowerCase().includes(filteredText.toLowerCase()) || d['Signal Description: Why is it important for development?'].toLowerCase().includes(filteredText.toLowerCase()) || d.keywords.indexOf(filteredText) !== -1);
-  const DataFilteredByCountry = selectedCountry === 'All CO/Unit' ? [...DataFilteredByText] : DataFilteredByText.filter((d) => d['CO/Unit'] === selectedCountry);
-  const [mouseClickData, setMouseClickData] = useState<SignalDataFormattedType | null>(null);
+  const DataFilteredByHorizon = selectedHorizon === 'All Horizons' ? [...DataFilteredBySS] : DataFilteredBySS.filter((d) => d.horizon === selectedHorizon);
+  const DataFilteredByText = filteredText === '' ? [...DataFilteredByHorizon] : DataFilteredByHorizon.filter((d) => d['B_signal/q2_signal'].toLowerCase().includes(filteredText.toLowerCase()) || d['B_signal/q3_issue'].toLowerCase().includes(filteredText.toLowerCase()) || d['B_signal/q3_implications'].toLowerCase().includes(filteredText.toLowerCase()) || d.keywords.indexOf(filteredText) !== -1);
+  const DataFilteredByCountry = selectedCountry === 'All CO/Unit' ? [...DataFilteredByText] : DataFilteredByText.filter((d) => d.country === selectedCountry);
+  const [mouseClickData, setMouseClickData] = useState<DataFormattedType | null>(null);
   return (
     <>
       <FlexContainer>
         {
-          DataFilteredByCountry.map((d, i) => <CardEl key={i} onClick={() => { setMouseClickData(d as SignalDataFormattedType); }}><Cards data={d as SignalDataFormattedType} key={i} /></CardEl>)
+          DataFilteredByCountry.map((d, i) => <CardEl key={i} onClick={() => { setMouseClickData(d as DataFormattedType); }}><Cards data={d as DataFormattedType} key={i} /></CardEl>)
         }
       </FlexContainer>
       {
         mouseClickData ? (
           <Modal
             visible
-            title={mouseClickData['Signal Title']}
+            title={mouseClickData['B_signal/q2_signal']}
             onOk={() => { setMouseClickData(null); }}
             onCancel={() => { setMouseClickData(null); }}
             footer={[
@@ -163,7 +162,7 @@ export const CardLayout = (props: Props) => {
             ]}
             width={960}
           >
-            <SignalTitleEl>{mouseClickData['Signal Title']}</SignalTitleEl>
+            <SignalTitleEl>{mouseClickData['B_signal/q2_signal']}</SignalTitleEl>
             <FlexEl>
               {
                 mouseClickData.STEEPV.map((d, i) => (
@@ -187,24 +186,38 @@ export const CardLayout = (props: Props) => {
               }
             </FlexEl>
             <ModalBodyEl>
-              <div className='bold'>What</div>
-              <div>{mouseClickData['Signal Description: What is the signal about?']}</div>
+              <div className='bold'>Issue</div>
+              <div>{mouseClickData['B_signal/q3_issue']}</div>
               <br />
               <br />
-              <div className='bold'>Why</div>
-              <div>{mouseClickData['Signal Description: Why is it important for development?']}</div>
+              <div className='bold'>Implication</div>
+              <div>{mouseClickData['B_signal/q3_implications']}</div>
             </ModalBodyEl>
             <HR />
-            <ModalTitleEl>Horizon</ModalTitleEl>
-            <ModalBodyEl>
-              <ChipEl
-                style={{ width: 'fit-content' }}
-                bgColor={HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?'])].bgColor : undefined}
-                fontColor={HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === mouseClickData['When is the signal likely to have the most impact if it becomes dominant?'])].textColor : undefined}
-              >
-                {mouseClickData['When is the signal likely to have the most impact if it becomes dominant?']}
-              </ChipEl>
-            </ModalBodyEl>
+            <ColumnContainer>
+              <ColumnEl>
+                <ModalTitleEl>Horizon</ModalTitleEl>
+                <ModalBodyEl>
+                  <ChipEl
+                    style={{ width: 'fit-content' }}
+                    bgColor={HorizonColor.findIndex((el) => el.value === mouseClickData.horizon) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === mouseClickData.horizon)].bgColor : undefined}
+                    fontColor={HorizonColor.findIndex((el) => el.value === mouseClickData.horizon) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === mouseClickData.horizon)].textColor : undefined}
+                  >
+                    {mouseClickData.horizon}
+                  </ChipEl>
+                </ModalBodyEl>
+              </ColumnEl>
+              <ColumnEl>
+                <ModalTitleEl>Strength</ModalTitleEl>
+                <ModalBodyEl>
+                  <ChipEl
+                    style={{ width: 'fit-content' }}
+                  >
+                    {STRENGTH[STRENGTH.findIndex((el) => el.key === mouseClickData['C_category/q7_strength'])].value}
+                  </ChipEl>
+                </ModalBodyEl>
+              </ColumnEl>
+            </ColumnContainer>
             <HR />
             <ModalTitleEl>Related Signature Solutions/Enablers</ModalTitleEl>
             <ModalBodyEl>
@@ -220,20 +233,38 @@ export const CardLayout = (props: Props) => {
                     </ChipEl>
                   ))
                 }
-                {
-                  mouseClickData['Other (unlinked to a signature solution/enabler)'] !== '' ? <ChipEl>{mouseClickData['Other (unlinked to a signature solution/enabler)']}</ChipEl> : null
-                }
               </FlexEl>
             </ModalBodyEl>
             <HR />
-            <ModalTitleEl>CO/Unit</ModalTitleEl>
-            <ModalBodyEl>
-              {mouseClickData['CO/Unit']}
-            </ModalBodyEl>
+            <ColumnContainer>
+              <ColumnEl>
+                <ModalTitleEl>CO/Unit</ModalTitleEl>
+                <ModalBodyEl>
+                  {mouseClickData.country}
+                </ModalBodyEl>
+              </ColumnEl>
+              <ColumnEl>
+                <ModalTitleEl>Region</ModalTitleEl>
+                <ModalBodyEl>
+                  {mouseClickData['A_Demo/q1_region']}
+                </ModalBodyEl>
+              </ColumnEl>
+            </ColumnContainer>
+            {
+              mouseClickData._attachments.length > 0 ? (
+                <>
+                  <HR />
+                  <ModalTitleEl>Attachments</ModalTitleEl>
+                  <ModalBodyEl>
+                    <a href={mouseClickData._attachments[0].download_url} target='_blank' rel='noreferrer'>{mouseClickData._attachments[0].filename}</a>
+                  </ModalBodyEl>
+                </>
+              ) : null
+            }
             <HR />
             <ModalTitleEl>Sources</ModalTitleEl>
             <ModalBodyEl>
-              <a href={mouseClickData['Source (URL)']} target='_blank' rel='noreferrer'>{mouseClickData['Source (URL)']}</a>
+              <a href={mouseClickData['B_signal/q4_url']} target='_blank' rel='noreferrer'>{mouseClickData['B_signal/q4_url']}</a>
             </ModalBodyEl>
           </Modal>
         )

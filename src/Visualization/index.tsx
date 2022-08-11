@@ -1,11 +1,12 @@
 import styled from 'styled-components';
 import axios from 'axios';
-import { Input, Select } from 'antd';
+import { Input, Select, Spin } from 'antd';
 import { useEffect, useState } from 'react';
 import {
   CountryList, HorizonColor, SSCOLOR, STEEPVCOLOR,
 } from '../Constants';
 import { CardLayout } from './CardLayout';
+import { APIDataType } from '../Types';
 
 const SettingsContainer = styled.div`
   margin: 4rem 0 2rem 0;
@@ -45,16 +46,11 @@ export const Visualization = () => {
   const [selectedHorizon, setSelectedHorizon] = useState<string>('All Horizons');
   const [selectedCountry, setSelectedCountry] = useState<string>('All CO/Unit');
   const [filteredText, setFilteredText] = useState<string>('');
-
+  const [data, setData] = useState<undefined | APIDataType[]>(undefined);
   useEffect(() => {
-    axios.get('https://kobo.humanitarianresponse.info/assets/aVyAsMwPQYr97DtTh5uhy3/submissions/?format=json', {
-      headers: {
-        Authorization: 'Token 53d5466b000d9b9f0ded7e174c31f0146f23397f',
-      },
-    })
+    axios.get('https://undp-kobo-api.herokuapp.com/get-data?id=aVyAsMwPQYr97DtTh5uhy3')
       .then((d: any) => {
-        // eslint-disable-next-line no-console
-        console.log(d);
+        setData(d.data);
       });
   }, []);
 
@@ -126,7 +122,7 @@ export const Visualization = () => {
             >
               <Select.Option key='All CO/Unit'>All CO/Unit</Select.Option>
               {
-                CountryList.map((d) => <Select.Option key={d}>{d}</Select.Option>)
+                CountryList.map((d) => <Select.Option key={d.value}>{d.value}</Select.Option>)
               }
             </Select>
           </SelectionEl>
@@ -140,13 +136,19 @@ export const Visualization = () => {
         </SettingsEl>
       </SettingsContainer>
       <VizEl>
-        <CardLayout
-          filteredSS={filteredSS}
-          filteredSteep={filteredSteep}
-          filteredText={filteredText}
-          selectedHorizon={selectedHorizon}
-          selectedCountry={selectedCountry}
-        />
+        {
+          data
+            ? (
+              <CardLayout
+                filteredSS={filteredSS}
+                filteredSteep={filteredSteep}
+                filteredText={filteredText}
+                selectedHorizon={selectedHorizon}
+                selectedCountry={selectedCountry}
+                data={data}
+              />
+            ) : <Spin />
+        }
       </VizEl>
     </>
   );
