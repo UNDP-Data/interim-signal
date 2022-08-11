@@ -44,3 +44,71 @@ export interface MouseOverDataType extends SignalDataFormattedType {
   xPos: number;
   yPos: number;
 }
+
+export interface ValidationDataType {
+  timestamp: number;
+  uid: string;
+  'by_whom': string;
+  color: string;
+  label: string;
+}
+
+export interface AttachmentDataType{
+  'download_large_url': string;
+  'download_medium_url': string;
+  'download_small_url': string;
+  'download_url': string;
+  filename: string;
+  id: number;
+  instance: number;
+  mimetype: string;
+  xform: number;
+}
+export interface APIDataType {
+  'A_Demo/q1_country': string;
+  'A_Demo/q1_region': string;
+  'B_signal/q2_signal': string;
+  'B_signal/q3_implications': string;
+  'B_signal/q3_issue': string;
+  'B_signal/q4_url': string;
+  'C_category/D_keywords/q10_keywords_01': string | undefined;
+  'C_category/D_keywords/q10_keywords_02': string | undefined;
+  'C_category/D_keywords/q10_keywords_03': string | undefined;
+  'C_category/q6_steepv': string;
+  'C_category/q7_strength': 'familiar_1' | 'weak_1' | 'deviant';
+  'C_category/q8_1_ss': string;
+  'C_category/q8_ss': string;
+  'C_category/q8_ss_other': string | undefined;
+  'C_category/q9_timeframe': 'immediate' | 'medium' | 'longterm' | 'unknown';
+  deviceid: string;
+  email: string;
+  end: string;
+  'formhub/uuid': string;
+  'meta/instanceID': string;
+  name: string;
+  start: string;
+  subscriberid: string;
+  today: string;
+  username: string;
+  __version__: string;
+  _attachments: AttachmentDataType[];
+  _geolocation: [number, number];
+  _id: number;
+  _notes: string[];
+  _status: string;
+  '_submission_time': string;
+  '_submitted_by': string | null;
+  _tags: string[];
+  _uuid: string;
+  '_validation_status': ValidationDataType | {};
+  _version_: string;
+  '_xform_id_string': string;
+}
+
+export interface DataFormattedType extends APIDataType {
+  relatedSignatureSolutions: string[];
+  STEEPV: string[];
+  keywords: string[];
+  country: string;
+  horizon: string;
+}

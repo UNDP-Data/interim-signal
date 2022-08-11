@@ -1,10 +1,9 @@
 import styled from 'styled-components';
 import { HorizonColor, SSCOLOR, STEEPVCOLOR } from '../Constants';
-// import { COLORVALUES, SDGCOLOR, STEEPVCOLOR } from '../Constants';
-import { SignalDataFormattedType } from '../Types';
+import { DataFormattedType } from '../Types';
 
 interface Props {
-  data: SignalDataFormattedType ;
+  data: DataFormattedType ;
 }
 
 const TooltipTitle = styled.div`
@@ -74,7 +73,7 @@ export const Cards = (props: Props) => {
     <CardContainer>
       <div>
         <TooltipTitle>
-          {data['Signal Title']}
+          {data['B_signal/q2_signal']}
         </TooltipTitle>
         <FlexEl>
           {
@@ -105,10 +104,10 @@ export const Cards = (props: Props) => {
         <ModalBodyEl>
           <FlexEl>
             <ChipEl
-              bgColor={HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?'])].bgColor : undefined}
-              fontColor={HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?']) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === data['When is the signal likely to have the most impact if it becomes dominant?'])].textColor : undefined}
+              bgColor={HorizonColor.findIndex((el) => el.value === data.horizon) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === data.horizon)].bgColor : undefined}
+              fontColor={HorizonColor.findIndex((el) => el.value === data.horizon) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === data.horizon)].textColor : undefined}
             >
-              {data['When is the signal likely to have the most impact if it becomes dominant?']}
+              {data.horizon}
             </ChipEl>
           </FlexEl>
         </ModalBodyEl>
