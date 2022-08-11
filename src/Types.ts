@@ -68,8 +68,8 @@ export interface APIDataType {
   'A_Demo/q1_country': string;
   'A_Demo/q1_region': string;
   'B_signal/q2_signal': string;
-  'B_signal/q3_implications': string;
-  'B_signal/q3_issue': string;
+  'B_signal/q3_implications': string | undefined;
+  'B_signal/q3_issue': string | undefined;
   'B_signal/q4_url': string;
   'C_category/D_keywords/q10_keywords_01': string | undefined;
   'C_category/D_keywords/q10_keywords_02': string | undefined;

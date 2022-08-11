@@ -138,7 +138,7 @@ export const CardLayout = (props: Props) => {
   const DataFilteredBySteep = filteredSteep === 'All STEEP+V' ? [...DataFormatted] : DataFormatted.filter((d) => d.STEEPV.indexOf(filteredSteep) !== -1);
   const DataFilteredBySS = filteredSS === 'All Signature Solutions' ? [...DataFilteredBySteep] : DataFilteredBySteep.filter((d) => d.relatedSignatureSolutions.indexOf(filteredSS) !== -1);
   const DataFilteredByHorizon = selectedHorizon === 'All Horizons' ? [...DataFilteredBySS] : DataFilteredBySS.filter((d) => d.horizon === selectedHorizon);
-  const DataFilteredByText = filteredText === '' ? [...DataFilteredByHorizon] : DataFilteredByHorizon.filter((d) => d['B_signal/q2_signal'].toLowerCase().includes(filteredText.toLowerCase()) || d['B_signal/q3_issue'].toLowerCase().includes(filteredText.toLowerCase()) || d['B_signal/q3_implications'].toLowerCase().includes(filteredText.toLowerCase()) || d.keywords.indexOf(filteredText) !== -1);
+  const DataFilteredByText = filteredText === '' ? [...DataFilteredByHorizon] : DataFilteredByHorizon.filter((d) => d['B_signal/q2_signal'].toLowerCase().includes(filteredText.toLowerCase()) || d['B_signal/q3_issue']?.toLowerCase().includes(filteredText.toLowerCase()) || d['B_signal/q3_implications']?.toLowerCase().includes(filteredText.toLowerCase()) || d.keywords.indexOf(filteredText) !== -1);
   const DataFilteredByCountry = selectedCountry === 'All CO/Unit' ? [...DataFilteredByText] : DataFilteredByText.filter((d) => d.country === selectedCountry);
   const [mouseClickData, setMouseClickData] = useState<DataFormattedType | null>(null);
   return (
