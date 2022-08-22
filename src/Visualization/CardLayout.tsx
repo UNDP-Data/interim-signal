@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle */
 import { Modal } from 'antd';
+import uniqBy from 'lodash.uniqby';
 import { useState } from 'react';
 import styled from 'styled-components';
 import {
@@ -213,7 +214,7 @@ export const CardLayout = (props: Props) => {
             <ModalBodyEl>
               <FlexEl>
                 {
-                  mouseClickData.relatedSignatureSolutions.map((d, i) => (
+                  uniqBy(mouseClickData.relatedSignatureSolutions, (d) => d.toLowerCase()).map((d, i) => (
                     <ChipEl
                       key={i}
                       bgColor={SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase()) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase())].bgColor : undefined}

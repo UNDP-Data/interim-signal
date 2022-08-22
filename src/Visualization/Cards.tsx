@@ -1,3 +1,4 @@
+import uniqBy from 'lodash.uniqby';
 import styled from 'styled-components';
 import { HorizonColor, SSCOLOR, STEEPVCOLOR } from '../Constants';
 import { DataFormattedType } from '../Types';
@@ -116,7 +117,7 @@ export const Cards = (props: Props) => {
         <ModalBodyEl>
           <FlexEl>
             {
-              data.relatedSignatureSolutions.map((d, i) => (
+              uniqBy(data.relatedSignatureSolutions, (d) => d.toLowerCase()).map((d, i) => (
                 <ChipEl
                   key={i}
                   bgColor={SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase()) !== -1 ? SSCOLOR[SSCOLOR.findIndex((el) => el.value.toLowerCase() === d.toLowerCase())].bgColor : undefined}
