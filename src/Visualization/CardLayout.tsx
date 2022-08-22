@@ -3,7 +3,7 @@ import { Modal } from 'antd';
 import { useState } from 'react';
 import styled from 'styled-components';
 import {
-  HorizonColor, SSCOLOR, STEEPVCOLOR, CountryList, STRENGTH,
+  HorizonColor, SSCOLOR, STEEPVCOLOR, CountryList,
 } from '../Constants';
 import { APIDataType, DataFormattedType } from '../Types';
 import { Cards } from './Cards';
@@ -204,16 +204,6 @@ export const CardLayout = (props: Props) => {
                     fontColor={HorizonColor.findIndex((el) => el.value === mouseClickData.horizon) !== -1 ? HorizonColor[HorizonColor.findIndex((el) => el.value === mouseClickData.horizon)].textColor : undefined}
                   >
                     {mouseClickData.horizon}
-                  </ChipEl>
-                </ModalBodyEl>
-              </ColumnEl>
-              <ColumnEl>
-                <ModalTitleEl>Strength</ModalTitleEl>
-                <ModalBodyEl>
-                  <ChipEl
-                    style={{ width: 'fit-content' }}
-                  >
-                    {STRENGTH[STRENGTH.findIndex((el) => el.key === mouseClickData['C_category/q7_strength'])].value}
                   </ChipEl>
                 </ModalBodyEl>
               </ColumnEl>
