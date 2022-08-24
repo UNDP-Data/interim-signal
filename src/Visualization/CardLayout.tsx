@@ -110,6 +110,17 @@ const ColumnContainer = styled.div`
   display: flex;
 `;
 
+const SubmitDateEl = styled.div`
+  font-size: 1.4rem;
+  color: var(--black-500);
+  font-style: italic;
+  margin: -1rem 0 2rem 0;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--black-400);
+`;
+
+const MONTHS = ['Jan', 'Feb', ' Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
 export const CardLayout = (props: Props) => {
   const {
     filteredSS,
@@ -186,6 +197,15 @@ export const CardLayout = (props: Props) => {
                 ))
               }
             </FlexEl>
+            <SubmitDateEl>
+              Submited on:
+              {' '}
+              {mouseClickData._submission_time.split('T')[0].split('-')[2]}
+              -
+              {MONTHS[parseInt(mouseClickData._submission_time.split('T')[0].split('-')[1], 10) - 1]}
+              -
+              {mouseClickData._submission_time.split('T')[0].split('-')[0]}
+            </SubmitDateEl>
             <ModalBodyEl>
               <div className='bold'>Issue</div>
               <div>{mouseClickData['B_signal/q3_issue']}</div>
